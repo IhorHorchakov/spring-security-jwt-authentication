@@ -1,0 +1,19 @@
+version: '3'
+services:
+
+  ss-jwt-application-server:
+    container_name: ss-jwt-application-server
+    image: ss-jwt-application-server
+    ports:
+      - "8080:8080"
+      - "9251:9251"
+    environment:
+      - DEBUG_PORT=9251
+    build:
+      context: authentication-server
+    networks:
+      - application-network
+
+networks:
+  application-network:
+      driver: bridge
