@@ -1,9 +1,11 @@
 package com.example.rest;
 
 import com.example.rest.request.LoginRequest;
+import com.example.rest.response.AuthenticationResponse;
+import com.example.rest.response.RefreshTokenResponse;
 import com.example.security.TokenService;
-import com.example.model.UserDetailWrapper;
-import com.example.service.UserDetailsSecurityService;
+import com.example.model.UserDetailModel;
+import com.example.service.UserServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,42 +20,31 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
     private final TokenService tokenService;
     private final AuthenticationManager authManager;
-    private final UserDetailsSecurityService userDetailsSecurityService;
+    private final UserServiceImpl userDetailsSecurityService;
 
-    public AuthenticationController(TokenService tokenService, AuthenticationManager authManager, UserDetailsSecurityService userDetailsSecurityService) {
+    public AuthenticationController(TokenService tokenService, AuthenticationManager authManager, UserServiceImpl userDetailsSecurityService) {
         this.tokenService = tokenService;
         this.authManager = authManager;
         this.userDetailsSecurityService = userDetailsSecurityService;
     }
 
-    @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
+    @PostMapping("/authenticate")
+    public AuthenticationResponse login(@RequestBody LoginRequest request) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
         authManager.authenticate(authenticationToken);
-
-        UserDetailWrapper userDetailWrapper = (UserDetailWrapper) userDetailsSecurityService.loadUserByUsername(request.getUsername());
+        UserDetailModel userDetailWrapper = (UserDetailModel) userDetailsSecurityService.loadUserByUsername(request.getUsername());
         String accessToken = tokenService.generateAccessToken(userDetailWrapper);
         String refreshToken = tokenService.generateRefreshToken(userDetailWrapper);
-
-        return new LoginResponse(accessToken, refreshToken);
+        return new AuthenticationResponse(accessToken, refreshToken);
     }
 
     @GetMapping("/token/refresh")
     public RefreshTokenResponse refreshToken(HttpServletRequest request) {
-        String authenticationHeader = request.getHeader("Authorization");
-
-        String username = tokenService.parseToken(authenticationHeader.substring(7));
-        UserDetailWrapper user = (UserDetailWrapper) userDetailsSecurityService.loadUserByUsername(username);
+        String username = tokenService.getTokenUsernameFromRequest(request);
+        UserDetailModel user = (UserDetailModel) userDetailsSecurityService.loadUserByUsername(username);
         String accessToken = tokenService.generateAccessToken(user);
         String refreshToken = tokenService.generateRefreshToken(user);
-
         return new RefreshTokenResponse(accessToken, refreshToken);
-    }
-
-    record RefreshTokenResponse(String accessJwt, String refreshJwt) {
-    }
-
-    record LoginResponse(String accessJwt, String refreshJwt) {
     }
 
 }

@@ -1,6 +1,5 @@
 package com.example.model;
 
-import com.example.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,12 +8,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class UserDetailWrapper implements UserDetails {
+public class UserDetailModel implements UserDetails {
 
     private static final long serialVersionUID = 1L;
     private User user;
 
-    public UserDetailWrapper(User user) {
+    public UserDetailModel(User user) {
         this.user = user;
     }
 

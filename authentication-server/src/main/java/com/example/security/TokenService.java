@@ -1,7 +1,8 @@
 package com.example.security;
 
-import com.example.model.UserDetailWrapper;
+import com.example.model.UserDetailModel;
 import com.nimbusds.jwt.SignedJWT;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -21,15 +22,15 @@ public class TokenService {
     @Autowired
     private JwtEncoder jwtEncoder;
 
-    public String generateAccessToken(UserDetailWrapper userDetailWrapper) {
+    public String generateAccessToken(UserDetailModel userDetailWrapper) {
        return generateJwt(userDetailWrapper, ACCESS_TOKEN_LIFETIME_IN_MINUTES);
     }
 
-    public String generateRefreshToken(UserDetailWrapper userDetailWrapper) {
+    public String generateRefreshToken(UserDetailModel userDetailWrapper) {
         return generateJwt(userDetailWrapper, REFRESH_TOKEN_LIFETIME_IN_MINUTES);
     }
 
-    private String generateJwt(UserDetailWrapper userDetailWrapper, Integer lifetime) {
+    private String generateJwt(UserDetailModel userDetailWrapper, Integer lifetime) {
         Instant now = Instant.now();
         String scope = userDetailWrapper.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -45,10 +46,12 @@ public class TokenService {
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 
-    public String parseToken(String token) {
+    public String getTokenUsernameFromRequest(HttpServletRequest request) {
         try {
-            SignedJWT decodedJWT = SignedJWT.parse(token);
-            String subject = decodedJWT.getJWTClaimsSet().getSubject();
+            String authenticationHeader = request.getHeader("Authorization");
+            String rawJwt = authenticationHeader.substring(7);
+            SignedJWT decodedJwt = SignedJWT.parse(rawJwt);
+            String subject = decodedJwt.getJWTClaimsSet().getSubject();
             return subject;
         } catch (ParseException e) {
             e.printStackTrace();

@@ -2,7 +2,7 @@ package com.example.security;
 
 import com.example.security.rsa.RsaKeysHolder;
 import com.example.security.rsa.RsaKeysGenerator;
-import com.example.service.UserDetailsSecurityService;
+import com.example.service.UserServiceImpl;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -41,11 +41,12 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService customUserDetailsService() {
-        return new UserDetailsSecurityService();
+        return new UserServiceImpl();
     }
 
     /**
      * The implementation of AuthenticationManager that uses UserCredentials (login, password) to authenticate a user
+     * by leveraging DaoAuthenticationProvider.
      */
     @Bean
     public AuthenticationManager userCredentialsAuthenticationManager() {
@@ -54,15 +55,6 @@ public class SecurityConfig {
         authProvider.setPasswordEncoder(passwordEncoder());
         return new ProviderManager(authProvider);
     }
-
-    /**
-     * The implementation of AuthenticationManager that uses JWT to authenticate a user
-     */
-//    @Bean
-//    public AuthenticationManager authManager() {
-//        var authProvider = new JwtAuthenticationProvider(jwtDecoder());
-//        return new ProviderManager(authProvider);
-//    }
 
     @Bean
     JwtEncoder jwtEncoder() {
@@ -80,11 +72,10 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/authenticate").permitAll()
                         .requestMatchers("/token/refresh").permitAll()
                         .requestMatchers("/home").permitAll()
                         .anyRequest().authenticated())
