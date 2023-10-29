@@ -47,7 +47,7 @@ ServiceProvider (which are not necessarily the same systems).
 It can also carry all the user’s claim, such as username, roles & permissions, so the service provider does not need to go
 into the database or external systems to verify that authentication data for each request - that data is extracted from the token.
 
-[client-server-flow](https://github.com/IhorHorchakov/spring-security-jwt-authentication/blob/master/img/jwt-client-server-flow.png?raw=true)
+![client-server-flow](https://github.com/IhorHorchakov/spring-security-jwt-authentication/blob/master/img/jwt-client-server-flow.png?raw=true)
 
 - Clients logs in by sending their credentials to the identity provider.
 - The identity provider verifies the credentials; if all is OK, it retrieves the user data, generates a JWT containing 
