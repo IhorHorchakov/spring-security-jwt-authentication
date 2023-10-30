@@ -49,14 +49,14 @@ into the database or external systems to verify that authentication data for eac
 
 ![client-server-flow](https://github.com/IhorHorchakov/spring-security-jwt-authentication/blob/master/img/jwt-client-server-flow.png?raw=true)
 
-- Clients logs in by sending their credentials to the identity provider.
-- The identity provider verifies the credentials; if all is OK, it retrieves the user data, generates a JWT containing 
+1) Client logs in by sending their credentials to the identity provider.
+2) The identity provider verifies the credentials; if all is OK, it retrieves the user data, generates a JWT containing 
 user details and permissions that will be used to access the services, and it also sets the expiration on the JWT 
 (which might be unlimited). Identity provider signs, and if needed, encrypts the JWT and sends it to the client as a 
 response to the initial request with credentials.
-- Client stores the JWT for a limited or unlimited amount of time, depending on the expiration set by the identity provider.
-- Client sends the stored JWT in an Authorization header for every request to the service provider.
-- For each request, the service provider takes the JWT from the `Authorization` header and decrypts it, 
+3) Client stores the JWT for a limited or unlimited amount of time, depending on the expiration set by the identity provider.
+4) Client sends the stored JWT in an Authorization header for every request to the service provider.
+5) For each request, the service provider takes the JWT from the `Authorization` header and decrypts it, 
 validates the signature, and if everything is OK, extracts the user data and permissions. Based on this data solely, 
 and again without looking up further details in the database or contacting the identity provider, it can accept or deny 
 the client request. The only requirement is that the identity and service providers have an agreement on encryption so 
