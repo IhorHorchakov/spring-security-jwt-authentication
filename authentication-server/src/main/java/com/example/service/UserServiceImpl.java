@@ -2,7 +2,7 @@ package com.example.service;
 
 import com.example.model.User;
 import com.example.repository.UserRepository;
-import com.example.model.UserDetailModel;
+import com.example.model.UserDetailsModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,6 +16,6 @@ public class UserServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.getByUsername(username).orElseThrow(()-> new UsernameNotFoundException("User with username = " + username + " does not exist!"));
-        return new UserDetailModel(user);
+        return new UserDetailsModel(user);
     }
 }

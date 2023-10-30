@@ -1,6 +1,6 @@
 package com.example.security;
 
-import com.example.model.UserDetailModel;
+import com.example.model.UserDetailsModel;
 import com.nimbusds.jwt.SignedJWT;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +22,15 @@ public class TokenService {
     @Autowired
     private JwtEncoder jwtEncoder;
 
-    public String generateAccessToken(UserDetailModel userDetailWrapper) {
+    public String generateAccessToken(UserDetailsModel userDetailWrapper) {
        return generateJwt(userDetailWrapper, ACCESS_TOKEN_LIFETIME_IN_MINUTES);
     }
 
-    public String generateRefreshToken(UserDetailModel userDetailWrapper) {
+    public String generateRefreshToken(UserDetailsModel userDetailWrapper) {
         return generateJwt(userDetailWrapper, REFRESH_TOKEN_LIFETIME_IN_MINUTES);
     }
 
-    private String generateJwt(UserDetailModel userDetailWrapper, Integer lifetime) {
+    private String generateJwt(UserDetailsModel userDetailWrapper, Integer lifetime) {
         Instant now = Instant.now();
         String scope = userDetailWrapper.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)

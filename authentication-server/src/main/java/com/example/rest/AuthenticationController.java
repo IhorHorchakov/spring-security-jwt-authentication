@@ -4,7 +4,7 @@ import com.example.rest.request.LoginRequest;
 import com.example.rest.response.AuthenticationResponse;
 import com.example.rest.response.RefreshTokenResponse;
 import com.example.security.TokenService;
-import com.example.model.UserDetailModel;
+import com.example.model.UserDetailsModel;
 import com.example.service.UserServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ public class AuthenticationController {
     public AuthenticationResponse login(@RequestBody LoginRequest request) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
         authManager.authenticate(authenticationToken);
-        UserDetailModel userDetailWrapper = (UserDetailModel) userDetailsSecurityService.loadUserByUsername(request.getUsername());
+        UserDetailsModel userDetailWrapper = (UserDetailsModel) userDetailsSecurityService.loadUserByUsername(request.getUsername());
         String accessToken = tokenService.generateAccessToken(userDetailWrapper);
         String refreshToken = tokenService.generateRefreshToken(userDetailWrapper);
         return new AuthenticationResponse(accessToken, refreshToken);
@@ -41,7 +41,7 @@ public class AuthenticationController {
     @GetMapping("/token/refresh")
     public RefreshTokenResponse refreshToken(HttpServletRequest request) {
         String username = tokenService.getTokenUsernameFromRequest(request);
-        UserDetailModel user = (UserDetailModel) userDetailsSecurityService.loadUserByUsername(username);
+        UserDetailsModel user = (UserDetailsModel) userDetailsSecurityService.loadUserByUsername(username);
         String accessToken = tokenService.generateAccessToken(user);
         String refreshToken = tokenService.generateRefreshToken(user);
         return new RefreshTokenResponse(accessToken, refreshToken);
