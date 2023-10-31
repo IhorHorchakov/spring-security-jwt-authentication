@@ -75,9 +75,12 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        // endpoint to log in the system - permit all http requests to enter
                         .requestMatchers("/authenticate").permitAll()
-                        .requestMatchers("/token/refresh").permitAll()
-                        .requestMatchers("/home").permitAll()
+                        // endpoint to get refresh token having logged in earlier - allow only authenticated http requests to enter
+                        .requestMatchers("/token/refresh").authenticated()
+                        // endpoint to get the home page having logged in earlier - allow only authenticated http requests to enter
+                        .requestMatchers("/home").authenticated()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)

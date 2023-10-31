@@ -9,7 +9,7 @@ import java.security.Principal;
 public class ResourceController {
 
     @GetMapping("/home")
-    public String homeAdmin(Principal principal) {
+    public String homePage(Principal principal) {
         return "Dear " + principal.getName() + ", you have been authorized and got 'HOME' page";
     }
 }
