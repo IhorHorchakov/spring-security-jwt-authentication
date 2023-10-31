@@ -54,7 +54,7 @@
     </dependencies>
 
     <build>
-        <finalName>ss-jwt-application-server</finalName>
+        <finalName>spring-security-jwt-authentication-server</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

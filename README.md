@@ -73,7 +73,6 @@ header should look like this:
 
 `Authorization: Bearer <token>`
 
--------
 Benefits of using tokens: 
 - stateless (self-contained) - makes easy horizontal scaling; 
 - provides fine-grained access control;
@@ -93,8 +92,7 @@ is a good workaround. Refresh tokens allow users to remain authenticated for lon
 -------
 #### JWT authentication: Implementation using Spring Security setup
 
-
-Spring Framework uses the approach of _configurers_ - an ability extend Spring configuration by adding custom components.
+Spring Framework uses the approach of _configurers_ - an ability to expand Spring configuration by adding custom components.
 
 Spring Security has many _configurers_ to support important authentication features (see inheritors of AbstractHttpConfigurer):
 - FormLoginConfigurer to enable authentication using username & password form submission,
@@ -108,12 +106,11 @@ Here is a high-level diagram of the JWT authentication flow:
 
 The entry point of authentication process is BearerTokenAuthenticationFilter. Spring security filter chain intercepts and verifies every http request by using BearerTokenAuthenticationFilter.
 This filter gets a JWT from request headers and passes it to AuthenticationManager. The AuthenticationManager leverages 
-AuthenticationProvider to check a JWT using PasswordEncoder & UserDetailsService.
+AuthenticationProvider to check a JWT using PasswordEncoder & rvice.
 
 We use `OAuth2ResourceServerConfigurer` to plug BearerTokenAuthenticationFilter in filter chain.
 
 ![]() <img src="https://github.com/IhorHorchakov/spring-security-jwt-authentication/blob/master/img/filter-chain.png" width=50%>
-
 
 #### Login flow
 
@@ -122,22 +119,31 @@ If JWT is not valid or missing in request headers, the filter creates anonymous 
 to next filters. Spring Framework matches existing endpoints to a request in order to find suitable one. 
 Then Spring is looking on SecurityConfig to check which endpoints are accessible without authentication (permitAll method) - 
 it is usually one endpoint that is created especially for authentication/login purpose. If everything is right 
-a target login method receives a request for authentication.
+a target login method receives a request for authentication. Here we use DaoAuthenticationProvider to pass authentication by
+username & password taken from login request.
 
 #### Resource access flow
 
 When some resource is requested the BearerTokenAuthenticationFilter receives a request and verifies JWT token.
-If the JWT is wrong or missing, Spring checks the accessibility of requested method by SpringConfig (permitAll()/authenticated() methods)
-and rejects access if no matched methods.
+If the JWT is wrong or missing, Spring components check the accessibility of requested method by SpringConfig
+(permitAll()/authenticated() methods) and reject access if no matched methods found.
 
-If JWT is present, the filter passes it to AuthenticationManager for verification. AuthenticationManager
-decodes the JWT and checks whether it is valid returning result back to the filter. If token is not valid the filter 
+If JWT is present, the BearerTokenAuthenticationFilter passes JWT to AuthenticationManager for verification. AuthenticationManager
+decodes checks whether it is valid using JwtAuthenticationProvider. If token is not valid the filter 
 returns 403 access denied response, otherwise a target resource gets accessed.
 
 #### AuthenticationManager
 
 ![spring-security-authentication-manager](https://github.com/IhorHorchakov/spring-security-jwt-authentication/blob/master/img/spring-security-authentication-manager.png?raw=true)
 
+The BearerTokenAuthenticationFilter uses AuthenticationManager to validate a token. AuthenticationManager goes through each
+AuthenticationProvider to verify the incoming token. The token contains user credentials and each AuthenticationProvider
+knows how to decode a token, extract and validate user credentials.
+
+Thw most common implementations of AuthenticationProvider are: 
+- DaoAuthenticationProvider supports authentication by username & password (we use it to pass the login),
+- JwtAuthenticationProvider supports authentication by JWT (we use it for any request when the user is logged in),
+- RememberMeAuthenticationProvider supports authentication by 'remember me' hash number.  
 
 -------
 Useful links:

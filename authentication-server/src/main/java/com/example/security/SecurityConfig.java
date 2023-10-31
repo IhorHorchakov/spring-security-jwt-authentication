@@ -40,7 +40,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService customUserDetailsService() {
+    public UserDetailsService userDetailsService() {
         return new UserServiceImpl();
     }
 
@@ -50,8 +50,8 @@ public class SecurityConfig {
      */
     @Bean
     public AuthenticationManager userCredentialsAuthenticationManager() {
-        var authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(customUserDetailsService());
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
         return new ProviderManager(authProvider);
     }

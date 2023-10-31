@@ -1,9 +1,9 @@
 version: '3'
 services:
 
-  ss-jwt-application-server:
-    container_name: ss-jwt-application-server
-    image: ss-jwt-application-server
+  spring-security-jwt-authentication-server:
+    container_name: spring-security-jwt-authentication-server
+    image: spring-security-jwt-authentication-server
     ports:
       - "8080:8080"
       - "9251:9251"
