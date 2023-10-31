@@ -86,14 +86,33 @@ Cons of using tokens:
 - compromised secret key – a major drawback of the token-based auth is that it relies on one key.
 If the key is not managed properly by developers or website administrators and is compromised by attackers,
 this can put sensitive information at risk;
-- unsuitable for Long-Term Authentication – systems that allow users to remain logged in for prolonged periods are less 
+- unsuitable for long-term authentication – systems that allow users to remain logged in for prolonged periods are less 
 ideal. These tokens require frequent revalidation and can annoy users. Using refresh tokens and storing them correctly 
 is a good workaround. Refresh tokens allow users to remain authenticated for longer periods without re-authorization;
 
 -------
 #### JWT authentication: Implementation using Spring Security setup
 
-![spring-security-flow](https://github.com/IhorHorchakov/spring-security-jwt-authentication/blob/master/img/spring-security-authentication-flow.png?raw=true)
+
+Spring Framework uses the approach of _configurers_ - an ability extend Spring configuration by adding custom components.
+
+Spring Security has many _configurers_ to support important authentication features (see inheritors of AbstractHttpConfigurer):
+- FormLoginConfigurer to enable authentication using username & password form submission,
+- SessionManagementConfigurer to enable authentication by sessionId,
+- RememberMeConfigurer typically involves the user checking a box when they enter their username and password that states to "Remember Me",
+- LogoutConfigurer adds logout support,
+- OAuth2ResourceServerConfigurer to enable authentication by using JWT.
+
+Here is a high-level diagram of the JWT authentication flow:
+![spring-security-authentication-flow](https://github.com/IhorHorchakov/spring-security-jwt-authentication/blob/master/img/spring-security-authentication-flow.png?raw=true)
+
+The entry point of authentication process is BearerTokenAuthenticationFilter. Spring security filter chain intercepts and verifies every http request by using BearerTokenAuthenticationFilter.
+This filter gets a JWT from request headers and passes it to AuthenticationManager. The AuthenticationManager leverages 
+AuthenticationProvider to check a JWT using PasswordEncoder & UserDetailsService.
+
+We use `OAuth2ResourceServerConfigurer` that plugs BearerTokenAuthenticationFilter in security filter chain.
+![filter-chain-filters](https://github.com/IhorHorchakov/spring-security-jwt-authentication/blob/master/img/filter-chain-filters.png?raw=true)
+
 
 
 -------

@@ -83,6 +83,7 @@ public class SecurityConfig {
                         .requestMatchers("/home").authenticated()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // OAuth2ResourceServerConfigurer adds BearerTokenAuthenticationFilter to security filter chain
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .build();
     }
