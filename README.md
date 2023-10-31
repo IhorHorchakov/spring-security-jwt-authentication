@@ -110,8 +110,33 @@ The entry point of authentication process is BearerTokenAuthenticationFilter. Sp
 This filter gets a JWT from request headers and passes it to AuthenticationManager. The AuthenticationManager leverages 
 AuthenticationProvider to check a JWT using PasswordEncoder & UserDetailsService.
 
-We use `OAuth2ResourceServerConfigurer` that plugs BearerTokenAuthenticationFilter in security filter chain.
-![filter-chain-filters]() <img src="https://github.com/IhorHorchakov/spring-security-jwt-authentication/blob/master/img/filter-chain.png" width=50%>
+We use `OAuth2ResourceServerConfigurer` to plug BearerTokenAuthenticationFilter in filter chain.
+
+![]() <img src="https://github.com/IhorHorchakov/spring-security-jwt-authentication/blob/master/img/filter-chain.png" width=50%>
+
+
+#### Login flow
+
+When the login request is coming to application the BearerTokenAuthenticationFilter receives a request and verifies JWT token. 
+If JWT is not valid or missing in request headers, the filter creates anonymous authentication token and passes http request 
+to next filters. Spring Framework matches existing endpoints to a request in order to find suitable one. 
+Then Spring is looking on SecurityConfig to check which endpoints are accessible without authentication (permitAll method) - 
+it is usually one endpoint that is created especially for authentication/login purpose. If everything is right 
+a target login method receives a request for authentication.
+
+#### Resource access flow
+
+When some resource is requested the BearerTokenAuthenticationFilter receives a request and verifies JWT token.
+If the JWT is wrong or missing, Spring checks the accessibility of requested method by SpringConfig (permitAll()/authenticated() methods)
+and rejects access if no matched methods.
+
+If JWT is present, the filter passes it to AuthenticationManager for verification. AuthenticationManager
+decodes the JWT and checks whether it is valid returning result back to the filter. If token is not valid the filter 
+returns 403 access denied response, otherwise a target resource gets accessed.
+
+#### AuthenticationManager
+
+![spring-security-authentication-manager](https://github.com/IhorHorchakov/spring-security-jwt-authentication/blob/master/img/spring-security-authentication-manager.png?raw=true)
 
 
 -------
