@@ -111,7 +111,7 @@ This filter gets a JWT from request headers and passes it to AuthenticationManag
 AuthenticationProvider to check a JWT using PasswordEncoder & UserDetailsService.
 
 We use `OAuth2ResourceServerConfigurer` that plugs BearerTokenAuthenticationFilter in security filter chain.
-![filter-chain-filters](https://github.com/IhorHorchakov/spring-security-jwt-authentication/blob/master/img/filter-chain-filters.png?raw=true)
+![filter-chain-filters](https://github.com/IhorHorchakov/spring-security-jwt-authentication/blob/master/img/filter-chain.png?raw=true)
 
 
 
