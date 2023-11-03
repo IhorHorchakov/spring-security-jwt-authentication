@@ -1,8 +1,10 @@
 Demo project to set up JWT authentication using Spring Security
 
 -------
-_Authentication_ is the process of determining if the person accessing a system really is who they claim to be. 
-Authentication systems allow or deny access based on credentials or other proof provided by those requesting access. 
+_Authentication_ is the process of confirming the identity of an accessor (person or system). It ensures that the person
+or system is who they claim to be before granting access to something. It's like checking someone's ID before allowing 
+them to enter a secure area. Authentication systems allow or deny access based on credentials or other proof provided by
+those requesting access. 
 Authentication typically works together with authorization, which determine what level of access a user should have.
 
 Most common authentication methods: 
