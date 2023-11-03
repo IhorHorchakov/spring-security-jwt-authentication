@@ -2,7 +2,6 @@ package com.example.security;
 
 import com.example.security.rsa.RsaKeysHolder;
 import com.example.security.rsa.RsaKeysGenerator;
-import com.example.service.UserServiceImpl;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -18,13 +17,18 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+
+import java.util.Collections;
+import java.util.List;
 
 @Configuration
 public class SecurityConfig {
@@ -41,7 +45,18 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return new UserServiceImpl();
+        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+        manager.createUser(User
+                .withUsername("johndoe@gmail.com")
+                .password(passwordEncoder().encode("johndoe"))
+                .authorities(List.of())
+                .build());
+        manager.createUser(User
+                .withUsername("fairyprincess@gmail.com")
+                .password(passwordEncoder().encode("fairyprincess"))
+                .authorities(List.of())
+                .build());
+        return manager;
     }
 
     /**

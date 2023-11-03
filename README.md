@@ -132,7 +132,7 @@ If the JWT is wrong or missing, Spring components check the accessibility of req
 
 If JWT is present, the BearerTokenAuthenticationFilter passes JWT to AuthenticationManager for verification. AuthenticationManager
 decodes checks whether it is valid using JwtAuthenticationProvider. If token is not valid the filter 
-returns 403 access denied response, otherwise a target resource gets accessed.
+returns 401Unauthorized response, otherwise a target resource gets accessed.
 
 #### AuthenticationManager
 

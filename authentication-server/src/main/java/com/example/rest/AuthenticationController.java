@@ -3,13 +3,13 @@ package com.example.rest;
 import com.example.rest.request.LoginRequest;
 import com.example.rest.response.AuthenticationResponse;
 import com.example.rest.response.RefreshTokenResponse;
-import com.example.security.TokenService;
-import com.example.model.UserDetailsModel;
+import com.example.service.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,18 +36,18 @@ public class AuthenticationController {
         // throws AuthenticationException if authentication fails
         authManager.authenticate(authenticationToken);
 
-        UserDetailsModel userDetailWrapper = (UserDetailsModel) userDetailsService.loadUserByUsername(request.getUsername());
-        String accessToken = tokenService.generateAccessToken(userDetailWrapper);
-        String refreshToken = tokenService.generateRefreshToken(userDetailWrapper);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
+        String accessToken = tokenService.generateAccessToken(userDetails);
+        String refreshToken = tokenService.generateRefreshToken(userDetails);
         return new AuthenticationResponse(accessToken, refreshToken);
     }
 
     @GetMapping("/token/refresh")
     public RefreshTokenResponse refreshToken(HttpServletRequest request) {
         String username = tokenService.getTokenUsernameFromRequest(request);
-        UserDetailsModel user = (UserDetailsModel) userDetailsService.loadUserByUsername(username);
-        String accessToken = tokenService.generateAccessToken(user);
-        String refreshToken = tokenService.generateRefreshToken(user);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        String accessToken = tokenService.generateAccessToken(userDetails);
+        String refreshToken = tokenService.generateRefreshToken(userDetails);
         return new RefreshTokenResponse(accessToken, refreshToken);
     }
 

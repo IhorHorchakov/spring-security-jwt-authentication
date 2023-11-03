@@ -1,10 +1,10 @@
-package com.example.security;
+package com.example.service;
 
-import com.example.model.UserDetailsModel;
 import com.nimbusds.jwt.SignedJWT;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -22,17 +22,17 @@ public class TokenService {
     @Autowired
     private JwtEncoder jwtEncoder;
 
-    public String generateAccessToken(UserDetailsModel userDetailWrapper) {
-       return generateJwt(userDetailWrapper, ACCESS_TOKEN_LIFETIME_IN_MINUTES);
+    public String generateAccessToken(UserDetails userDetails) {
+       return generateJwt(userDetails, ACCESS_TOKEN_LIFETIME_IN_MINUTES);
     }
 
-    public String generateRefreshToken(UserDetailsModel userDetailWrapper) {
-        return generateJwt(userDetailWrapper, REFRESH_TOKEN_LIFETIME_IN_MINUTES);
+    public String generateRefreshToken(UserDetails userDetails) {
+        return generateJwt(userDetails, REFRESH_TOKEN_LIFETIME_IN_MINUTES);
     }
 
-    private String generateJwt(UserDetailsModel userDetailWrapper, Integer lifetime) {
+    private String generateJwt(UserDetails userDetails, Integer lifetime) {
         Instant now = Instant.now();
-        String scope = userDetailWrapper.getAuthorities().stream()
+        String scope = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(" "));
 
@@ -40,7 +40,7 @@ public class TokenService {
                 .issuer("self")
                 .issuedAt(now)
                 .expiresAt(now.plus(lifetime, ChronoUnit.MINUTES))
-                .subject(userDetailWrapper.getUsername())
+                .subject(userDetails.getUsername())
                 .claim("scope", scope)
                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
