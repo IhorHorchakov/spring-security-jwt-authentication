@@ -1,6 +1,6 @@
-This is a demo project to set up JWT authentication using Spring Security
+ This is a demo project to set up JWT authentication using Spring Security
 
--------
+### Theory
 _Authentication_ is the process of confirming the identity of an accessor (person or system). It ensures that the person
 or system is who they claim to be before granting access to something. It's like checking someone's ID before allowing 
 them to enter a secure area. Authentication systems allow or deny access based on credentials or other proof provided by
@@ -39,7 +39,7 @@ There are a lot of tools we can use for token-based authentication:
 altered after a token is issued. JWT is often used for web APIs, including RESTful APIs, to authenticate a user wanting 
 access to the API.
 
--------
+
 #### JWT Authentication
 
 JWT authentication implies using JSON tokens to log in on the web in general, not only for REST services.
@@ -91,8 +91,7 @@ this can put sensitive information at risk;
 ideal. These tokens require frequent revalidation and can annoy users. Using refresh tokens and storing them correctly 
 is a good workaround. Refresh tokens allow users to remain authenticated for longer periods without re-authorization;
 
--------
-#### JWT authentication: Implementation using Spring Security setup
+#### Implementation using Spring Security setup
 
 Spring Framework uses the approach of _configurers_ - an ability to expand Spring configuration by adding custom components.
 
