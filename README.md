@@ -1,11 +1,11 @@
-Demo project to set up JWT authentication using Spring Security
+This is a demo project to set up JWT authentication using Spring Security
 
 -------
 _Authentication_ is the process of confirming the identity of an accessor (person or system). It ensures that the person
 or system is who they claim to be before granting access to something. It's like checking someone's ID before allowing 
 them to enter a secure area. Authentication systems allow or deny access based on credentials or other proof provided by
 those requesting access. 
-Authentication typically works together with authorization, which determine what level of access a user should have.
+Authentication typically works together with authorization, which determines what level of access a user should have.
 
 Most common authentication methods: 
 - username & password - a user enters their username and password into a login form, and if the credentials match what 
@@ -42,32 +42,32 @@ access to the API.
 -------
 #### JWT Authentication
 
-JWT authentication implies using JSON tokens to login on the web in general, not only for REST services.
+JWT authentication implies using JSON tokens to log in on the web in general, not only for REST services.
 It is robust and can carry a lot of information, but is still simple to use even though its size is relatively small. 
 Like any other token, JWT can be used to pass the identity of authenticated users between an identity provider and a
 ServiceProvider (which are not necessarily the same systems). 
-It can also carry all the user’s claim, such as username, roles & permissions, so the service provider does not need to go
+It can also carry all the user’s claims, such as username, roles & permissions, so the service provider does not need to go
 into the database or external systems to verify that authentication data for each request - that data is extracted from the token.
 
 ![client-server-flow](https://github.com/IhorHorchakov/spring-security-jwt-authentication/blob/master/img/jwt-client-server-flow.png?raw=true)
 
-1) Client logs in by sending their credentials to the identity provider.
+1) The client logs in by sending their credentials to the identity provider.
 2) The identity provider verifies the credentials; if all is OK, it retrieves the user data, generates a JWT containing 
 user details and permissions that will be used to access the services, and it also sets the expiration on the JWT 
-(which might be unlimited). Identity provider signs, and if needed, encrypts the JWT and sends it to the client as a 
+(which might be unlimited). The identity provider signs, and if needed, encrypts the JWT and sends it to the client as a 
 response to the initial request with credentials.
-3) Client stores the JWT for a limited or unlimited amount of time, depending on the expiration set by the identity provider.
-4) Client sends the stored JWT in an Authorization header for every request to the service provider.
+3) The client stores the JWT for a limited or unlimited amount of time, depending on the expiration set by the identity provider.
+4) The client sends the stored JWT in an Authorization header for every request to the service provider.
 5) For each request, the service provider takes the JWT from the `Authorization` header and decrypts it, 
 validates the signature, and if everything is OK, extracts the user data and permissions. Based on this data solely, 
 and again without looking up further details in the database or contacting the identity provider, it can accept or deny 
-the client request. The only requirement is that the identity and service providers have an agreement on encryption so 
+the client's request. The only requirement is that the identity and service providers have an agreement on encryption so 
 that service can verify the signature or even decrypt which identity was encrypted.
 
 This flow allows for great flexibility while still keeping things secure and easy to develop. By using this approach, 
 it is easy to add new server nodes to the service provider cluster, initializing them with only the ability to 
 verify the signature and decrypt the tokens by providing them a shared secret key. No session replication, 
-database synchronization or inter-node communication is required. REST in its full glory.
+database synchronization, or inter-node communication is required. REST in its full glory.
 
 The main difference between JWT and other arbitrary tokens is the standardization of the token’s content. Another 
 recommended approach is to send the JWT token in the `Authorization` header using the Bearer scheme. The content of the 
@@ -79,7 +79,7 @@ Benefits of using tokens:
 - stateless (self-contained) - makes easy horizontal scaling; 
 - provides fine-grained access control;
 - flexible - expiration time (session or longer), exchangeable and refreshable;
-- inherently more secured - because tokens don’t have to contain a user’s personal data and are algorithm/software generated,
+- inherently more secured - because tokens don’t have to contain a user’s data and are algorithm/software generated,
 they keep this data safer from hackers;
 - cross-platform compatible;
 
@@ -106,9 +106,9 @@ Spring Security has many _configurers_ to support important authentication featu
 Here is a high-level diagram of the JWT authentication flow:
 ![spring-security-authentication-flow](https://github.com/IhorHorchakov/spring-security-jwt-authentication/blob/master/img/spring-security-authentication-flow.png?raw=true)
 
-The entry point of authentication process is BearerTokenAuthenticationFilter. Spring security filter chain intercepts and verifies every http request by using BearerTokenAuthenticationFilter.
+The entry point of the authentication process is BearerTokenAuthenticationFilter. Spring security filter chain intercepts and verifies every HTTP request by using BearerTokenAuthenticationFilter.
 This filter gets a JWT from request headers and passes it to AuthenticationManager. The AuthenticationManager leverages 
-AuthenticationProvider to check a JWT using PasswordEncoder & rvice.
+AuthenticationProvider to check a JWT using PasswordEncoder & service.
 
 We use `OAuth2ResourceServerConfigurer` to plug BearerTokenAuthenticationFilter in filter chain.
 
@@ -116,13 +116,13 @@ We use `OAuth2ResourceServerConfigurer` to plug BearerTokenAuthenticationFilter 
 
 #### Login flow
 
-When the login request is coming to application the BearerTokenAuthenticationFilter receives a request and verifies JWT token. 
-If JWT is not valid or missing in request headers, the filter creates anonymous authentication token and passes http request 
-to next filters. Spring Framework matches existing endpoints to a request in order to find suitable one. 
+When the login request comes to the application the BearerTokenAuthenticationFilter receives a request and verifies JWT token. 
+If JWT is not valid or missing in request headers, the filter creates an anonymous authentication token and passes HTTP request 
+to the next filters. Spring Framework matches existing endpoints to a request to find a suitable one. 
 Then Spring is looking on SecurityConfig to check which endpoints are accessible without authentication (permitAll method) - 
-it is usually one endpoint that is created especially for authentication/login purpose. If everything is right 
-a target login method receives a request for authentication. Here we use DaoAuthenticationProvider to pass authentication by
-username & password taken from login request.
+it is usually one endpoint that is created especially for authentication/login purposes. If everything is right 
+a target login method receives an authentication request. Here we use DaoAuthenticationProvider to pass authentication by
+username & password taken from the login request.
 
 #### Resource access flow
 
@@ -131,8 +131,8 @@ If the JWT is wrong or missing, Spring components check the accessibility of req
 (permitAll()/authenticated() methods) and reject access if no matched methods found.
 
 If JWT is present, the BearerTokenAuthenticationFilter passes JWT to AuthenticationManager for verification. AuthenticationManager
-decodes checks whether it is valid using JwtAuthenticationProvider. If token is not valid the filter 
-returns 401Unauthorized response, otherwise a target resource gets accessed.
+decodes checks whether it is valid using JwtAuthenticationProvider. If the token is not valid the filter 
+returns 401Unauthorized response, otherwise, a target resource gets accessed.
 
 #### AuthenticationManager
 
@@ -142,7 +142,7 @@ The BearerTokenAuthenticationFilter uses AuthenticationManager to validate a tok
 AuthenticationProvider to verify the incoming token. The token contains user credentials and each AuthenticationProvider
 knows how to decode a token, extract and validate user credentials.
 
-Thw most common implementations of AuthenticationProvider are: 
+The most common implementations of AuthenticationProvider are: 
 - DaoAuthenticationProvider supports authentication by username & password (we use it to pass the login),
 - JwtAuthenticationProvider supports authentication by JWT (we use it for any request when the user is logged in),
 - RememberMeAuthenticationProvider supports authentication by 'remember me' hash number.  
