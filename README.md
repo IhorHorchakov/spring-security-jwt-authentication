@@ -40,7 +40,7 @@ altered after a token is issued. JWT is often used for web APIs, including RESTf
 access to the API.
 
 
-**JWT Authentication**
+##### JWT Authentication
 
 JWT authentication implies using JSON tokens to log in on the web in general, not only for REST services.
 It is robust and can carry a lot of information, but is still simple to use even though its size is relatively small. 
@@ -113,7 +113,7 @@ We use `OAuth2ResourceServerConfigurer` to plug BearerTokenAuthenticationFilter 
 
 ![]() <img src="https://github.com/IhorHorchakov/spring-security-jwt-authentication/blob/master/img/filter-chain.png" width=50%>
 
-**Login flow**
+##### Login flow
 
 When the login request comes to the application the BearerTokenAuthenticationFilter receives a request and verifies JWT token. 
 If JWT is not valid or missing in request headers, the filter creates an anonymous authentication token and passes HTTP request 
@@ -123,7 +123,7 @@ it is usually one endpoint that is created especially for authentication/login p
 a target login method receives an authentication request. Here we use DaoAuthenticationProvider to pass authentication by
 username & password taken from the login request.
 
-**Resource access flow**
+##### Resource access flow
 
 When some resource is requested the BearerTokenAuthenticationFilter receives a request and verifies JWT token.
 If the JWT is wrong or missing, Spring components check the accessibility of requested method by SpringConfig
@@ -133,7 +133,7 @@ If JWT is present, the BearerTokenAuthenticationFilter passes JWT to Authenticat
 decodes checks whether it is valid using JwtAuthenticationProvider. If the token is not valid the filter 
 returns 401Unauthorized response, otherwise, a target resource gets accessed.
 
-**AuthenticationManager**
+##### AuthenticationManager
 
 ![spring-security-authentication-manager](https://github.com/IhorHorchakov/spring-security-jwt-authentication/blob/master/img/spring-security-authentication-manager.png?raw=true)
 
