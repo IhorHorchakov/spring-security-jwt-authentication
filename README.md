@@ -105,11 +105,12 @@ Spring Security has many _configurers_ to support important authentication featu
 Here is a high-level diagram of the JWT authentication flow:
 ![spring-security-authentication-flow](https://github.com/IhorHorchakov/spring-security-jwt-authentication/blob/master/img/spring-security-authentication-flow.png?raw=true)
 
-The entry point of the authentication process is BearerTokenAuthenticationFilter. Spring security filter chain intercepts and verifies every HTTP request by using BearerTokenAuthenticationFilter.
+The entry point of the authentication process is `BearerTokenAuthenticationFilter`. Spring security filter chain intercepts and verifies every HTTP request by using BearerTokenAuthenticationFilter.
 This filter gets a JWT from request headers and passes it to AuthenticationManager. The AuthenticationManager leverages 
 AuthenticationProvider to check a JWT using PasswordEncoder & service.
 
-We use `OAuth2ResourceServerConfigurer` to plug BearerTokenAuthenticationFilter in filter chain.
+We use `OAuth2ResourceServerConfigurer` to plug BearerTokenAuthenticationFilter in filter chain by calling `.oauth2ResourceServer()`
+ method.
 
 ![]() <img src="https://github.com/IhorHorchakov/spring-security-jwt-authentication/blob/master/img/filter-chain.png" width=50%>
 
