@@ -49,6 +49,11 @@ ServiceProvider (which are not necessarily the same systems).
 It can also carry all the user’s claims, such as username, roles & permissions, so the service provider does not need to go
 into the database or external systems to verify that authentication data for each request - that data is extracted from the token.
 
+A JWT consists of three parts: header, payload, and signature. The header contains metadata about the token, such as the
+algorithm used to sign it and the token type. The payload contains the claims, which are the statements about the user 
+or the data. The signature is the result of applying the algorithm to the header and the payload, using the secret key 
+or the private key. The three parts are separated by dots and encoded in Base64URL format.
+
 ![client-server-flow](https://github.com/IhorHorchakov/spring-security-jwt-authentication/blob/master/img/jwt-client-server-flow.png?raw=true)
 
 1) The client logs in by sending their credentials to the identity provider.
@@ -83,13 +88,15 @@ Benefits of using tokens:
 they keep this data safer from hackers;
 - cross-platform compatible;
 
-Cons of using tokens: 
+Challenges of JWT:
 - compromised secret key – a major drawback of the token-based auth is that it relies on one key.
 If the key is not managed properly by developers or website administrators and is compromised by attackers,
 this can put sensitive information at risk;
 - unsuitable for long-term authentication – systems that allow users to remain logged in for prolonged periods are less 
 ideal. These tokens require frequent revalidation and can annoy users. Using refresh tokens and storing them correctly 
 is a good workaround. Refresh tokens allow users to remain authenticated for longer periods without re-authorization;
+- it is vulnerable to theft, making it important to use secure channels and store the JWT in a safe place. Additionally,
+JWT is difficult to revoke, so it is important to use short-lived tokens and implement mechanisms to refresh or renew them when necessary.
 
 ### Implementation using Spring Security setup
 
